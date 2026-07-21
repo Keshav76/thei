@@ -1,0 +1,1264 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BODH.AI — A National-Scale Federated Healthcare Ecosystem</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;0,8..60,700;1,8..60,400;1,8..60,600&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;1,9..40,400&family=IBM+Plex+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            navy: '#1C2644',
+            'navy-alt': '#232F55',
+            cream: '#1C2644',
+            'cream-alt': '#232F55',
+            'text-warm': '#E2DCD0',
+            'muted-dark': '#8A96A8',
+            'hint-dark': '#4E5A6E',
+            ink: '#E2DCD0',
+            'muted-light': '#8A96A8',
+            'hint-light': '#4E5A6E',
+            gold: '#C8A870',
+            'border-dark': '#2E3D5C',
+            'border-light': '#2E3D5C',
+            'stage-bg': '#0E1424',
+          },
+          fontFamily: {
+            serif: ['"Source Serif 4"', 'Georgia', 'serif'],
+            sans: ['"DM Sans"', 'system-ui', 'sans-serif'],
+            mono: ['"IBM Plex Mono"', 'monospace'],
+          },
+          fontSize: {
+            display: ['150px', { lineHeight: '0.96', letterSpacing: '-0.02em' }],
+            h1: ['100px', { lineHeight: '1.06' }],
+            h2: ['58px', { lineHeight: '1.14' }],
+            h3: ['36px', { lineHeight: '1.3' }],
+            lead: ['27px', { lineHeight: '1.55' }],
+            body: ['21px', { lineHeight: '1.6' }],
+            caption: ['16px'],
+            label: ['18px'],
+            stat: ['106px', { lineHeight: '1' }],
+            quote: ['66px'],
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    /* ---- Fonts + non-Tailwind primitives ---- */
+    :root {
+      --ease: cubic-bezier(0.16, 1, 0.3, 1);
+      --dur: 0.7s;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #0E1424;
+    }
+
+    /* ---- Fixed 16:9 stage ---- */
+    .deck-viewport {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      background: #0E1424;
+    }
+
+    .deck-stage {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      transform-origin: 0 0;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      display: block;
+      visibility: hidden;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .slide.active,
+    .slide.visible {
+      visibility: visible;
+      opacity: 1;
+      pointer-events: auto;
+      z-index: 1;
+    }
+
+    .slide.navy {
+      background: #1C2644;
+      color: #E2DCD0;
+    }
+
+    .slide.cream {
+      background: #1C2644;
+      color: #E2DCD0;
+    }
+
+    /* 80px grid fingerprint on dark slides */
+    .slide.navy::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+      background-size: 80px 80px;
+    }
+
+    /* italic gold emphasis */
+    .disp em,
+    h1 em,
+    h2 em,
+    h3 em,
+    .lead em,
+    .chapter-title em {
+      font-style: italic;
+      color: #C8A870;
+    }
+
+    /* em-dash gold bullets */
+    ul.dash {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    ul.dash li {
+      font-family: "DM Sans", sans-serif;
+      font-size: 21px;
+      line-height: 1.5;
+      display: grid;
+      grid-template-columns: 32px 1fr;
+      column-gap: 14px;
+      align-items: start;
+    }
+
+    ul.dash li::before {
+      content: "—";
+      font-family: "IBM Plex Mono", monospace;
+      color: #C8A870;
+      font-size: 21px;
+      line-height: 1.5;
+    }
+
+    ul.dash li b {
+      font-weight: 500;
+      color: #F3EEE4;
+    }
+
+    /* transform table */
+    .xform {
+      display: grid;
+      grid-template-columns: 200px 1fr 24px 1fr;
+      row-gap: 22px;
+      column-gap: 24px;
+      align-items: center;
+    }
+
+    .xform .dim {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 13px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #C8A870;
+    }
+
+    .xform .old {
+      font-family: "DM Sans", sans-serif;
+      font-size: 20px;
+      color: #8A96A8;
+    }
+
+    .xform .arrow {
+      font-family: "IBM Plex Mono", monospace;
+      color: #C8A870;
+      text-align: center;
+    }
+
+    .xform .new {
+      font-family: "DM Sans", sans-serif;
+      font-size: 20px;
+    }
+
+    .xform .rowline {
+      grid-column: 1/-1;
+      height: 1px;
+      background: #2E3D5C;
+    }
+
+    /* stats */
+    .stat-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    .stat-cell {
+      border-top: 1px solid #2E3D5C;
+      padding: 26px 30px 0 0;
+    }
+
+    .stat-cell .num {
+      font-family: "Source Serif 4", serif;
+      font-weight: 600;
+      font-size: 106px;
+      color: #C8A870;
+      letter-spacing: -0.02em;
+      line-height: 1;
+    }
+
+    .stat-cell .lab {
+      font-family: "DM Sans", sans-serif;
+      font-size: 19px;
+      margin-top: 14px;
+      color: #E2DCD0;
+    }
+
+    .stat-cell .note {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-top: 8px;
+      color: #8A96A8;
+    }
+
+    /* agenda */
+    .agenda {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      column-gap: 90px;
+      row-gap: 26px;
+    }
+
+    .agenda .item {
+      display: grid;
+      grid-template-columns: 56px 1fr;
+      align-items: baseline;
+      gap: 18px;
+      border-top: 1px solid #2E3D5C;
+      padding-top: 18px;
+    }
+
+    .agenda .item .n {
+      font-family: "Source Serif 4", serif;
+      font-size: 34px;
+      font-weight: 600;
+      color: #C8A870;
+    }
+
+    .agenda .item .t {
+      font-family: "DM Sans", sans-serif;
+      font-size: 22px;
+    }
+
+    .agenda .item .t small {
+      display: block;
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 12px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #8A96A8;
+      margin-top: 6px;
+    }
+
+    /* two-col */
+    .two {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .two .col {
+      padding-right: 64px;
+    }
+
+    .two .col+.col {
+      padding-right: 0;
+      padding-left: 64px;
+      border-left: 1px solid #2E3D5C;
+    }
+
+    /* cards */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .cards .card {
+      padding: 0 44px;
+    }
+
+    .cards .card+.card {
+      border-left: 1px solid #2E3D5C;
+    }
+
+    .cards .card p {
+      color: #8A96A8;
+    }
+
+    /* entrance animations */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity var(--dur) var(--ease), transform var(--dur) var(--ease);
+    }
+
+    .slide.visible .reveal {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .slide.visible .reveal[data-d="1"] {
+      transition-delay: .08s
+    }
+
+    .slide.visible .reveal[data-d="2"] {
+      transition-delay: .16s
+    }
+
+    .slide.visible .reveal[data-d="3"] {
+      transition-delay: .24s
+    }
+
+    .slide.visible .reveal[data-d="4"] {
+      transition-delay: .32s
+    }
+
+    .slide.visible .reveal[data-d="5"] {
+      transition-delay: .40s
+    }
+
+    @media (prefers-reduced-motion:reduce) {
+
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.2s !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="deck-viewport">
+    <main class="deck-stage" id="deckStage">
+
+      <!-- 1 · COVER -->
+      <section class="slide navy active visible">
+        <div class="absolute inset-0 px-[144px] py-[78px] flex flex-col justify-center z-[2]">
+          <div class="reveal font-mono text-label tracking-[0.2em] uppercase text-gold" data-d="1">M.Tech Thesis Defense
+            · IIT Kanpur</div>
+          <div class="reveal w-9 h-px bg-gold my-[22px]" data-d="2"></div>
+          <div class="reveal disp font-serif font-bold text-display max-w-[1500px]" data-d="3">Building <em>trust</em>
+            into<br> federated healthcare</div>
+          <div class="reveal font-sans text-lead text-muted-dark mt-[34px] max-w-[1000px]" data-d="4">
+            <strong class="text-text-warm font-medium">BODH.AI</strong> — a national-scale ecosystem for
+            privacy-preserving federated learning and independent model evaluation.
+          </div>
+          <div class="reveal flex gap-16 flex-wrap mt-[52px]" data-d="5">
+            <div>
+              <div class="font-serif text-[32px] font-semibold">Keshav Banka</div>
+              <div class="font-mono text-label tracking-[0.16em] uppercase text-gold mt-1.5">Resilient Infrastructure
+              </div>
+            </div>
+            <div>
+              <div class="font-serif text-[32px] font-semibold">Harsh Baid</div>
+              <div class="font-mono text-label tracking-[0.16em] uppercase text-gold mt-1.5">Benchmarking &amp;
+                Deployment</div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="absolute left-[144px] right-[144px] bottom-[78px] flex justify-between items-baseline font-mono text-label tracking-[0.16em] uppercase text-muted-dark border-t border-border-dark pt-[14px]">
+          <span>Supervisor · Prof. Nisheeth Srivastava</span><span>Dept. of CSE · IIT Kanpur</span>
+        </div>
+      </section>
+
+      <!-- 2 · AGENDA -->
+      <section class="slide cream">
+        <div class="absolute inset-0 px-[144px] py-[78px] grid grid-rows-[auto_1fr_auto] z-[2]">
+          <div
+            class="flex justify-between items-baseline font-mono text-label tracking-[0.16em] uppercase text-muted-light pb-[14px] border-b border-border-light">
+            <span>Overview</span><span class="count text-gold"></span>
+          </div>
+          <div class="self-center">
+            <div class="reveal mb-[44px]" data-d="1">
+              <div class="font-mono text-label tracking-[0.2em] uppercase text-gold mb-4">Agenda</div>
+              <div class="w-9 h-px bg-gold my-[22px]"></div>
+              <h2 class="font-serif font-semibold text-h2">What we'll <em>cover</em></h2>
+            </div>
+            <div class="agenda max-w-[1400px] reveal" data-d="2">
+              <div class="item"><span class="n">01</span><span class="t">Problem &amp; motivation<small>The trust crisis
+                    in healthcare AI</small></span></div>
+              <div class="item"><span class="n">02</span><span class="t">Resilient FL infrastructure<small>Part A —
+                    Keshav</small></span></div>
+              <div class="item"><span class="n">03</span><span class="t">BODH.AI benchmarking &amp;
+                  deployment<small>Part B — Harsh</small></span></div>
+              <div class="item"><span class="n">04</span><span class="t">National-scale validation<small>The hackathon
+                    stress test</small></span></div>
+              <div class="item"><span class="n">05</span><span class="t">Contributions &amp; limitations<small>What we
+                    built, what remains</small></span></div>
+              <div class="item"><span class="n">06</span><span class="t">Future work<small>Where the platform goes
+                    next</small></span></div>
+            </div>
+          </div>
+          <div
+            class="flex justify-between items-baseline font-mono text-label tracking-[0.16em] uppercase text-muted-light pt-[14px] border-t border-border-light">
+            <span>BODH.AI</span><span>IIT Kanpur</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3 · THE PROBLEM -->
+      <section class="slide navy">
+        <div class="absolute inset-0 px-[144px] py-[78px] grid grid-rows-[auto_1fr_auto] z-[2]">
+          <div
+            class="flex justify-between items-baseline font-mono text-label tracking-[0.16em] uppercase text-muted-dark pb-[14px] border-b border-border-dark">
+            <span>Motivation</span><span class="count text-gold"></span>
+          </div>
+          <div class="self-center">
+            <div class="reveal mb-[44px]" data-d="1">
+              <div class="font-mono text-label tracking-[0.2em] uppercase text-gold mb-4">The problem</div>
+              <div class="w-9 h-px bg-gold my-[22px]"></div>
+              <h2 class="font-serif font-semibold text-h2 max-w-[1400px]">Healthcare AI faces two <em>structural</em>
+                crises</h2>
+            </div>
+            <ul class="dash max-w-[1400px] reveal" data-d="2">
+              <li><span><b>Data silos : </b>Patient records are sensitive and regulated — they cannot be centralised for
+                  training.</span></li>
+              <li><span><b>Trust deficit : </b>Models are self-evaluated on internal test sets — inviting overfitting,
+                  data leakage, and inflated claims.</span></li>
+              <li><span><b>Real World Usage : </b>Federated Learning solves silos in theory, but no existing frameworks
+                  in real world healthcare.</span></li>
+              <li><span><b>Model Evaluation : </b>No trustworthy, independent evaluation exists for clinical AI.</span>
+              </li>
+            </ul>
+          </div>
+          <div
+            class="flex justify-between items-baseline font-mono text-label tracking-[0.16em] uppercase text-muted-dark pt-[14px] border-t border-border-dark">
+            <span>BODH.AI</span><span>The trust crisis</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4 · HOW THE TWO THESES FIT -->
+      <section class="slide cream">
+        <div class="absolute inset-0 px-[144px] py-[78px] grid grid-rows-[auto_1fr_auto] z-[2]">
+          <div
+            class="flex justify-between items-baseline font-mono text-label tracking-[0.16em] uppercase text-muted-light pb-[14px] border-b border-border-light">
+            <span>Scope</span><span class="count text-gold"></span>
+          </div>
+          <div class="self-center">
+            <div class="reveal mb-[44px]" data-d="1">
+              <div class="font-mono text-label tracking-[0.2em] uppercase text-gold mb-4">One ecosystem, two theses
+              </div>
+              <div class="w-9 h-px bg-gold my-[22px]"></div>
+              <h2 class="font-serif font-semibold text-h2">Plumbing and <em>trust</em>, built together</h2>
+            </div>
+            <div class="two max-w-[1400px] reveal" data-d="2">
+              <div class="col">
+                <div class="font-serif text-[30px] font-semibold mb-6"><span
+                    class="block font-mono text-[12px] tracking-[0.16em] text-gold uppercase mb-2.5">Part A ·
+                    Keshav</span>Resilient infrastructure</div>
+                <p class="font-sans text-body text-muted-light">The communication, security, and scalability layer that
+                  makes federated learning survive real hospital networks.</p>
+              </div>
+              <div class="col">
+                <div class="font-serif text-[30px] font-semibold mb-6"><span
+                    class="block font-mono text-[12px] tracking-[0.16em] text-gold uppercase mb-2.5">Part B ·
+                    Harsh</span>Benchmarking &amp; deployment</div>
+                <p class="font-sans text-body text-muted-light">The trust layer — independent evaluation, accessible
+                  deployment, and verifiable evidence for clinical decisions.</p>
+              </div>
+            </div>
+            <p class="lead font-sans text-lead text-muted-light reveal max-w-[1400px] mt-[44px]" data-d="3">Shared goal:
+              make FL <em>production-ready</em> and its outputs <em>trustworthy</em>.</p>
+          </div>
+          <div
+            class="flex justify-between items-baseline font-mono text-label tracking-[0.16em] uppercase text-muted-light pt-[14px] border-t border-border-light">
+            <span>BODH.AI</span><span>Two theses, one platform</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5 · FL PRIMER -->
+      <section class="slide navy">
+        <div class="absolute inset-0 px-[144px] py-[78px] grid grid-rows-[auto_1fr_auto] z-[2]">
+          <div
+            class="flex justify-between items-baseline font-mono text-label tracking-[0.16em] uppercase text-muted-dark pb-[14px] border-b border-border-dark">
+            <span>Background</span><span class="count text-gold"></span>
+          </div>
+          <div class="flex self-center gap-16">
+            <div class="self-center">
+              <div class="reveal mb-[44px]" data-d="1">
+                <div class="font-mono text-label tracking-[0.2em] uppercase text-gold mb-4">Federated learning in one
+                  slide</div>
+                <div class="w-9 h-px bg-gold my-[22px]"></div>
+                <h2 class="font-serif font-semibold text-h2 max-w-[1400px]">Share the <em>updates</em>, never the data
+                </h2>
+              </div>
+              <ul class="dash max-w-[1400px] reveal" data-d="2">
+                <li><span>Data stays local; only model weight updates leave the hospital.</span></li>
+                <li><span>A central server aggregates those updates into a global model.</span></li>
+                <li><span><b>Academic assumption:</b> communication is instant, reliable, and free.</span></li>
+                <li><span><b>Reality:</b> Intermittent connectivity, and wildly heterogeneous hardware.</span></li>
+              </ul>
+            </div>
+            <img class="h-[28rem]" src="fl.png">
+          </div>
+          <div
+            class="flex justify-between items-baseline font-mono text-label tracking-[0.16em] uppercase text-muted-dark pt-[14px] border-t border-border-dark">
+            <span>BODH.AI</span><span>FL primer</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6 · SECTION DIVIDER — PART A -->
+      <section class="slide navy">
+        <div class="absolute inset-0 px-[144px] py-[78px] flex flex-col justify-center z-[2]">
+          <div class="reveal font-mono text-label tracking-[0.24em] uppercase text-gold" data-d="1">Part A · Keshav
+            Banka</div>
+          <div class="reveal w-9 h-px bg-gold my-[26px]" data-d="2"></div>
+          <div class="chapter-title reveal font-serif text-[120px] font-bold leading-[0.98] tracking-[-0.02em]"
+            data-d="3">Resilient<br><em>infrastructure</em></div>
+          <div class="reveal font-sans text-lead text-muted-dark mt-[26px] max-w-[1100px]" data-d="4">Turning a brittle
+            research prototype into a production-grade federated learning system that survives real hospital networks.
+          </div>
+        </div>
+      </section>
+
+      <!-- 7 · OLD SYSTEM -->
+      <section class="slide cream">
+        <div class="absolute inset-0 px-[144px] py-[78px] grid grid-rows-[auto_1fr_auto] z-[2]">
+          <div
+            class="flex justify-between items-baseline font-mono text-label tracking-[0.16em] uppercase text-muted-light pb-[14px] border-b border-border-light">
+            <span>Part A · System evolution</span><span class="count text-gold"></span>
+          </div>
+          <div class="self-center">
+            <div class="reveal mb-[44px]" data-d="1">
+              <div class="font-mono text-label tracking-[0.2em] uppercase text-gold mb-4">The starting point</div>
+              <div class="w-9 h-px bg-gold my-[22px]"></div>
+              <h2 class="font-serif font-semibold text-h2 max-w-[1400px]">Why the original pipeline <em>failed</em></h2>
+            </div>
+            <ul class="dash max-w-[1400px] reveal" data-d="2">
+              <li><span>A persistent, synchronous, server-driven socket pipeline.</span></li>
+              <li><span>Hospital firewalls and NAT broke connections; a single dropout doomed the whole training
+                  round.</span></li>
+              <li><span>Thousands of concurrent nodes at national scale were architecturally impossible.</span></li>
+            </ul>
+          </div>
+          <div
+            class="flex justify-between items-baseline font-mono text-label tracking-[0.16em] uppercase text-muted-light pt-[14px] border-t border-border-light">
+            <span>Part A</span><span>The old system</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 8 · NEW SYSTEM: PUB/SUB -->
+      <section class="slide navy">
+        <div class="absolute inset-0 px-[144px] py-[78px] grid grid-rows-[auto_1fr_auto] z-[2]">
+          <div
+            class="flex justify-between items-baseline font-mono text-label tracking-[0.16em] uppercase text-muted-dark pb-[14px] border-b border-border-dark">
+            <span>Part A · System evolution</span><span class="count text-gold"></span>
+          </div>
+          <div class="flex self-center">
+            <div class="self-center">
+              <div class="reveal mb-[44px]" data-d="1">
+                <div class="font-mono text-label tracking-[0.2em] uppercase text-gold mb-4">The core contribution</div>
+                <div class="w-9 h-px bg-gold my-[22px]"></div>
+                <h2 class="font-serif font-semibold text-h2 max-w-[1400px]">An <em>event-driven</em> Publish–Subscribe
+                  architecture</h2>
+              </div>
+              <ul class="dash max-w-[1400px] reveal" data-d="2">
+                <li><span>Server publishes events (e.g. <b>ROUND_START</b>) to topic channels.</span></li>
+                <li><span>Clients subscribe, fetch weights via REST, <em>disconnect</em>, train locally, then push
+                    updates back.</span></li>
+                <li><span>Server becomes an asynchronous state machine — not a blocking loop controller.</span></li>
+                <li><span>Server state is decoupled from any single client's connectivity.</span></li>
+              </ul>
+            </div>
+            <!-- <img class="h-[700px]" src="a.png" /> -->
+          </div>
+          <div
+            class="flex justify-between items-baseline font-mono text-label tracking-[0.16em] uppercase text-muted-dark pt-[14px] border-t border-border-dark">
+            <span>Part A</span><span>Pub/Sub redesign</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 9 · KEY TRANSFORMATIONS -->
+      <section class="slide cream">
+        <div class="absolute inset-0 px-[144px] py-[78px] grid grid-rows-[auto_1fr_auto] z-[2]">
+          <div
+            class="flex justify-between items-baseline font-mono text-label tracking-[0.16em] uppercase text-muted-light pb-[14px] border-b border-border-light">
+            <span>Part A · System evolution</span><span class="count text-gold"></span>
+          </div>
+          <div class="self-center">
+            <div class="reveal mb-[44px]" data-d="1">
+              <div class="font-mono text-label tracking-[0.2em] uppercase text-gold mb-4">Before → after</div>
+              <div class="w-9 h-px bg-gold my-[22px]"></div>
+              <h2 class="font-serif font-semibold text-h2">Five key <em>transformations</em></h2>
+            </div>
+            <div class="xform max-w-[1400px] reveal" data-d="2">
+              <span class="new dim">Communication</span><span class="old pl-72">Persistent
+                socket</span><span class="arrow text-4xl">&#8594;</span><span class="new pl-20">Stateless REST
+                API</span>
+              <span class="rowline"></span>
+              <span class="new dim">Training</span><span class="old pl-72">Server-controlled
+                loop</span><span class="arrow text-4xl">&#8594;</span><span class="new pl-20">Event-triggered</span>
+              <span class="rowline"></span>
+              <span class="new dim">Load</span><span class="old pl-72">High &amp;
+                centralised</span><span class="arrow text-4xl">&#8594;</span><span class="new pl-20">Distributed, no
+                heartbeats</span>
+              <span class="rowline"></span>
+              <span class="new dim">Connectivity</span><span class="old pl-72">Continuous
+                required</span><span class="arrow text-4xl">&#8594;</span><span
+                class="new pl-20">Intermittent-tolerant</span>
+              <span class="rowline"></span>
+              <span class="new dim">Scalability</span><span class="old pl-72">Vertical only</span><span
+                class="arrow text-4xl">&#8594;</span><span class="new pl-20">Horizontal</span>
+            </div>
+          </div>
+          <div
+            class="flex justify-between items-baseline font-mono text-label tracking-[0.16em] uppercase text-muted-light pt-[14px] border-t border-border-light">
+            <span>Part A</span><span>Key transformations</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 10 · SECURE AGGREGATION -->
+      <section class="slide navy">
+        <div class="absolute inset-0 px-[144px] py-[78px] grid grid-rows-[auto_1fr_auto] z-[2]">
+          <div
+            class="flex justify-between items-baseline font-mono text-label tracking-[0.16em] uppercase text-muted-dark pb-[14px] border-b border-border-dark">
+            <span>Part A · Security &amp; privacy</span><span class="count text-gold"></span>
+          </div>
+          <div class="self-center">
+            <div class="reveal mb-[44px]" data-d="1">
+              <div class="font-mono text-label tracking-[0.2em] uppercase text-gold mb-4">Secure aggregation (SecAgg)
+              </div>
+              <div class="w-9 h-px bg-gold my-[22px]"></div>
+              <h2 class="font-serif font-semibold text-h2 max-w-[1400px]">The server sums updates while staying
+                <em>blind</em>
+              </h2>
+            </div>
+            <ul class="dash max-w-[1400px] reveal" data-d="2">
+              <li><span>Goal: compute the sum of updates without seeing any single client's weights.</span></li>
+              <li><span>Pairwise secret sharing — clients add random masks that cancel on aggregation.</span></li>
+              <li><span>Intercepted payloads look like <em>meaningless noise</em>, even to the server.</span></li>
+              <li><span>Shamir's Secret Sharing provides dropout recovery — re-engineered for a stateless, async
+                  world.</span></li>
+            </ul>
+          </div>
+          <div
+            class="flex justify-between items-baseline font-mono text-label tracking-[0.16em] uppercase text-muted-dark pt-[14px] border-t border-border-dark">
+            <span>Part A</span><span>Secure aggregation</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 11 · DATA PIPELINE -->
+      <section class="slide cream">
+        <div class="absolute inset-0 px-[144px] py-[78px] grid grid-rows-[auto_1fr_auto] z-[2]">
+          <div
+            class="flex justify-between items-baseline font-mono text-label tracking-[0.16em] uppercase text-muted-light pb-[14px] border-b border-border-light">
+            <span>Part A · Engineering</span><span class="count text-gold"></span>
+          </div>
+          <div class="self-center">
+            <div class="reveal mb-[44px]" data-d="1">
+              <div class="font-mono text-label tracking-[0.2em] uppercase text-gold mb-4">Improvement 1 · Edge data
+                pipeline</div>
+              <div class="w-9 h-px bg-gold my-[22px]"></div>
+              <h2 class="font-serif font-semibold text-h2 max-w-[1400px]">Hadoop out, <em>local file system</em> in</h2>
+            </div>
+            <ul class="dash max-w-[1400px] reveal" data-d="2">
+              <li><span>Hadoop/Spark's JVM overhead was starving GPU training.</span></li>
+              <li><span>Empirically, hospital datasets rarely exceed gigabyte scale — a distributed FS was
+                  unjustified.</span></li>
+              <li><span>Rearchitected to local processing (Pandas, native PyTorch DataLoaders).</span></li>
+              <li><span>Result: a single executable, <em>orders-of-magnitude</em> faster loading, higher admin
+                  trust.</span></li>
+            </ul>
+          </div>
+          <div
+            class="flex justify-between items-baseline font-mono text-label tracking-[0.16em] uppercase text-muted-light pt-[14px] border-t border-border-light">
+            <span>Part A</span><span>Pragmatic redesign</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 12 · DATABASE -->
+      <section class="slide navy">
+        <div class="absolute inset-0 px-[144px] py-[78px] grid grid-rows-[auto_1fr_auto] z-[2]">
+          <div
+            class="flex justify-between items-baseline font-mono text-label tracking-[0.16em] uppercase text-muted-dark pb-[14px] border-b border-border-dark">
+            <span>Part A · Engineering</span><span class="count text-gold"></span>
+          </div>
+          <div class="flex gap-3 self-center">
+            <div class="self-center">
+              <div class="reveal mb-[44px]" data-d="1">
+                <div class="font-mono text-label tracking-[0.2em] uppercase text-gold mb-4">Improvement 2 ·
+                  Orchestration
+                  database</div>
+                <div class="w-9 h-px bg-gold my-[22px]"></div>
+                <h2 class="font-serif font-semibold text-h2 max-w-[1400px]">SQLite → <em>PostgreSQL</em></h2>
+              </div>
+              <ul class="dash max-w-[1400px] reveal" data-d="2">
+                <li><span>SQLite suffered catastrophic locking failures under concurrent national load.</span></li>
+                <li><span>Migrated to PostgreSQL with MVCC and connection pooling.</span></li>
+                <li><span>Now handles hundreds of simultaneous writes without data loss or timeout cascades.</span></li>
+              </ul>
+            </div>
+            <img class="h-[32rem]" src="sql.png" />
+          </div>
+          <div
+            class="flex justify-between items-baseline font-mono text-label tracking-[0.16em] uppercase text-muted-dark pt-[14px] border-t border-border-dark">
+            <span>Part A</span><span>Production database</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 13 · CONVERGENCE -->
+      <section class="slide cream">
+        <div class="absolute inset-0 px-[144px] py-[78px] grid grid-rows-[auto_1fr_auto] z-[2]">
+          <div
+            class="flex justify-between items-baseline font-mono text-label tracking-[0.16em] uppercase text-muted-light pb-[14px] border-b border-border-light">
+            <span>Part A · Validation</span><span class="count text-gold"></span>
+          </div>
+          <div class="self-center flex gap-3">
+            <div class="self-center">
+              <div class="reveal mb-[44px]" data-d="1">
+                <div class="font-mono text-label tracking-[0.2em] uppercase text-gold mb-4">Does the FL actually learn?
+                </div>
+                <div class="w-9 h-px bg-gold my-[22px]"></div>
+                <h2 class="font-serif font-semibold text-h2 max-w-[1400px]">Convergence under <em>non-IID</em> data</h2>
+              </div>
+              <ul class="dash max-w-[1400px] reveal" data-d="2">
+                <li><span>Controlled MNIST experiment simulating hospital "data-silo" conditions.</span></li>
+                <li><span>Compared centralised (upper bound), isolated, and federated training.</span></li>
+                <li><span>Confirms the FL implementation converges correctly — distinct from the scale/concurrency
+                    test.</span></li>
+              </ul>
+            </div>
+            <div><img src="mnist.png"></div>
+          </div>
+          <div
+            class="flex justify-between items-baseline font-mono text-label tracking-[0.16em] uppercase text-muted-light pt-[14px] border-t border-border-light">
+            <span>Part A</span><span>Benchmark validation</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 14 · SECTION DIVIDER — PART B -->
+      <section class="slide navy">
+        <div class="absolute inset-0 px-[144px] py-[78px] flex flex-col justify-center z-[2]">
+          <div class="reveal font-mono text-label tracking-[0.24em] uppercase text-gold" data-d="1">Part B · Harsh Baid
+          </div>
+          <div class="reveal w-9 h-px bg-gold my-[26px]" data-d="2"></div>
+          <div class="chapter-title reveal font-serif text-[120px] font-bold leading-[0.98] tracking-[-0.02em]"
+            data-d="3">Benchmarking<br>&amp; <em>deployment</em></div>
+          <div class="reveal font-sans text-lead text-muted-dark mt-[26px] max-w-[1100px]" data-d="4">BODH.AI —
+            independent, privacy-preserving evaluation and one-click hospital participation, turning model claims into
+            verifiable evidence.</div>
+        </div>
+      </section>
+
+      <!-- 15 · EVALUATION CRISIS -->
+      <section class="slide cream">
+        <div class="absolute inset-0 px-[144px] py-[78px] grid grid-rows-[auto_1fr_auto] z-[2]">
+          <div
+            class="flex justify-between items-baseline font-mono text-label tracking-[0.16em] uppercase text-muted-light pb-[14px] border-b border-border-light">
+            <span>Part B · BODH.AI</span><span class="count text-gold"></span>
+          </div>
+          <div class="self-center">
+            <div class="reveal mb-[44px]" data-d="1">
+              <div class="font-mono text-label tracking-[0.2em] uppercase text-gold mb-4">Why existing platforms fail
+                healthcare</div>
+              <div class="w-9 h-px bg-gold my-[22px]"></div>
+              <h2 class="font-serif font-semibold text-h2 max-w-[1400px]">The <em>evaluation</em> crisis</h2>
+            </div>
+            <ul class="dash max-w-[1400px] reveal" data-d="2">
+              <li><span><b>Kaggle</b> — requires publicly disseminating datasets (a privacy bottleneck).</span></li>
+              <li><span><b>Public benchmarks</b> — decay through repeated hypothesis testing.</span></li>
+              <li><span><b>MLPerf</b> — closed, consortium-driven; not open or continuous.</span></li>
+              <li><span>The gap: independent, privacy-preserving, <em>reproducible</em> third-party evaluation.</span>
+              </li>
+            </ul>
+          </div>
+          <div
+            class="flex justify-between items-baseline font-mono text-label tracking-[0.16em] uppercase text-muted-light pt-[14px] border-t border-border-light">
+            <span>Part B</span><span>The evaluation crisis</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 16 · HIDDEN-DATASET -->
+      <section class="slide navy">
+        <div class="absolute inset-0 px-[144px] py-[78px] grid grid-rows-[auto_1fr_auto] z-[2]">
+          <div
+            class="flex justify-between items-baseline font-mono text-label tracking-[0.16em] uppercase text-muted-dark pb-[14px] border-b border-border-dark">
+            <span>Part B · BODH.AI</span><span class="count text-gold"></span>
+          </div>
+          <div class="self-center">
+            <div class="reveal mb-[44px]" data-d="1">
+              <div class="font-mono text-label tracking-[0.2em] uppercase text-gold mb-4">The core idea</div>
+              <div class="w-9 h-px bg-gold my-[22px]"></div>
+              <h2 class="font-serif font-semibold text-h2 max-w-[1400px]">A <em>hidden-dataset</em> evaluation paradigm
+              </h2>
+            </div>
+            <ul class="dash max-w-[1400px] reveal" data-d="2">
+              <li><span>Strictly decouple model development from model evaluation.</span></li>
+              <li><span>Curated clinical data lives hidden on the server — never exposed via any API.</span></li>
+              <li><span>The developer never sees the test set — data leakage and overfitting are <em>mathematically
+                    eliminated</em>.</span></li>
+              <li><span>Produces tamper-evident, regulatory-grade evidence; continuous enrichment fights benchmark
+                  decay.</span></li>
+            </ul>
+          </div>
+          <div
+            class="flex justify-between items-baseline font-mono text-label tracking-[0.16em] uppercase text-muted-dark pt-[14px] border-t border-border-dark">
+            <span>Part B</span><span>Hidden-dataset evaluation</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 17 · SECURITY OF EXECUTION -->
+      <section class="slide cream">
+        <div class="absolute inset-0 px-[144px] py-[78px] grid grid-rows-[auto_1fr_auto] z-[2]">
+          <div
+            class="flex justify-between items-baseline font-mono text-label tracking-[0.16em] uppercase text-muted-light pb-[14px] border-b border-border-light">
+            <span>Part B · BODH.AI</span><span class="count text-gold"></span>
+          </div>
+          <div class="self-center">
+            <div class="reveal mb-[44px]" data-d="1">
+              <div class="font-mono text-label tracking-[0.2em] uppercase text-gold mb-4">Running untrusted code safely
+              </div>
+              <div class="w-9 h-px bg-gold my-[22px]"></div>
+              <h2 class="font-serif font-semibold text-h2 max-w-[1400px]">A <em>network-isolated</em> Docker sandbox
+              </h2>
+            </div>
+            <ul class="dash max-w-[1400px] reveal" data-d="2">
+              <li><span>Every submission runs in an ephemeral container with <b>--network none</b>; exfiltration fails
+                  at the kernel.</span></li>
+              <li><span>The hidden dataset is mounted read-only; cgroups cap CPU, RAM, and time.</span></li>
+              <li><span>Only stdout (predictions) leaves; the container is destroyed immediately after.</span></li>
+            </ul>
+          </div>
+          <div
+            class="flex justify-between items-baseline font-mono text-label tracking-[0.16em] uppercase text-muted-light pt-[14px] border-t border-border-light">
+            <span>Part B</span><span>Security of execution</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 18 · TRUST & TRANSPARENCY -->
+      <section class="slide navy">
+        <div class="absolute inset-0 px-[144px] py-[78px] grid grid-rows-[auto_1fr_auto] z-[2]">
+          <div
+            class="flex justify-between items-baseline font-mono text-label tracking-[0.16em] uppercase text-muted-dark pb-[14px] border-b border-border-dark">
+            <span>Part B · BODH.AI</span><span class="count text-gold"></span>
+          </div>
+          <div class="self-center">
+            <div class="reveal mb-[44px]" data-d="1">
+              <div class="font-mono text-label tracking-[0.2em] uppercase text-gold mb-4">Credibility, made public</div>
+              <div class="w-9 h-px bg-gold my-[22px]"></div>
+              <h2 class="font-serif font-semibold text-h2 max-w-[1400px]">A leaderboard with a <em>provenance</em> trail
+              </h2>
+            </div>
+            <ul class="dash max-w-[1400px] reveal" data-d="2">
+              <li><span>Performance is published openly — good or bad.</span></li>
+              <li><span>Each entry is cryptographically tied to a model hash, dataset version, and timestamp.</span>
+              </li>
+              <li><span>A verifiable audit trail — evidence for governance boards and regulators (FDA / EMA /
+                  CDSCO).</span></li>
+            </ul>
+          </div>
+          <div
+            class="flex justify-between items-baseline font-mono text-label tracking-[0.16em] uppercase text-muted-dark pt-[14px] border-t border-border-dark">
+            <span>Part B</span><span>Trust &amp; transparency</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 19 · DESKTOP CLIENT -->
+      <section class="slide cream">
+        <div class="absolute inset-0 px-[144px] py-[78px] grid grid-rows-[auto_1fr_auto] z-[2]">
+          <div
+            class="flex justify-between items-baseline font-mono text-label tracking-[0.16em] uppercase text-muted-light pb-[14px] border-b border-border-light">
+            <span>Part B · Productization</span><span class="count text-gold"></span>
+          </div>
+          <div class="self-center">
+            <div class="reveal mb-[44px]" data-d="1">
+              <div class="font-mono text-label tracking-[0.2em] uppercase text-gold mb-4">Democratising participation
+              </div>
+              <div class="w-9 h-px bg-gold my-[22px]"></div>
+              <h2 class="font-serif font-semibold text-h2 max-w-[1400px]">A productized <em>desktop</em> FedClient</h2>
+            </div>
+            <ul class="dash max-w-[1400px] reveal" data-d="2">
+              <li><span>The barrier is operational, not mathematical — hospital IT staff aren't ML engineers.</span>
+              </li>
+              <li><span>An Electron app bundles Python, PyTorch, and crypto libraries into one double-click
+                  binary.</span></li>
+              <li><span>Outbound-only connections bypass firewalls and NAT — <em>zero</em> custom IT config.</span></li>
+              <li><span>One-click auth, live training visualization, schema mapping for data heterogeneity.</span></li>
+            </ul>
+          </div>
+          <div
+            class="flex justify-between items-baseline font-mono text-label tracking-[0.16em] uppercase text-muted-light pt-[14px] border-t border-border-light">
+            <span>Part B</span><span>Desktop client</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 20 · EXTENSIBILITY -->
+      <section class="slide navy">
+        <div class="absolute inset-0 px-[144px] py-[78px] grid grid-rows-[auto_1fr_auto] z-[2]">
+          <div
+            class="flex justify-between items-baseline font-mono text-label tracking-[0.16em] uppercase text-muted-dark pb-[14px] border-b border-border-dark">
+            <span>Part B · Extensibility</span><span class="count text-gold"></span>
+          </div>
+          <div class="self-center">
+            <div class="reveal mb-[44px]" data-d="1">
+              <div class="font-mono text-label tracking-[0.2em] uppercase text-gold mb-4">Any architecture, no pipeline
+                change</div>
+              <div class="w-9 h-px bg-gold my-[22px]"></div>
+              <h2 class="font-serif font-semibold text-h2 max-w-[1400px]">Script-based <em>extensibility</em></h2>
+            </div>
+            <ul class="dash max-w-[1400px] reveal" data-d="2">
+              <li><span>Model definition is decoupled from the platform pipeline.</span></li>
+              <li><span>Researchers upload arbitrary architectures via <b>solution.py</b> + a ZIP of weights.</span>
+              </li>
+              <li><span>"Model testing without training" — benchmark pre-trained models without joining FL.</span></li>
+              <li><span>The platform loads and runs any model with <em>no</em> core code changes.</span></li>
+            </ul>
+          </div>
+          <div
+            class="flex justify-between items-baseline font-mono text-label tracking-[0.16em] uppercase text-muted-dark pt-[14px] border-t border-border-dark">
+            <span>Part B</span><span>Extensibility</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 21 · HACKATHON SETUP -->
+      <section class="slide cream">
+        <div class="absolute inset-0 px-[144px] py-[78px] grid grid-rows-[auto_1fr_auto] z-[2]">
+          <div
+            class="flex justify-between items-baseline font-mono text-label tracking-[0.16em] uppercase text-muted-light pb-[14px] border-b border-border-light">
+            <span>Shared validation</span><span class="count text-gold"></span>
+          </div>
+          <div class="flex gap-16 self-center">
+            <div class="self-center">
+              <div class="reveal mb-[44px]" data-d="1">
+                <div class="font-mono text-label tracking-[0.2em] uppercase text-gold mb-4">A live, high-stakes stress
+                  test</div>
+                <div class="w-9 h-px bg-gold my-[22px]"></div>
+                <h2 class="font-serif font-semibold text-h2 max-w-[1400px]">The national <em>hackathon</em></h2>
+              </div>
+              <ul class="dash max-w-[1400px] reveal" data-d="2">
+                <li><span>A real proxy for a national hospital network under chaotic, concurrent load.</span></li>
+                <li><span>300+ independent teams — data scientists, hospital IT, and academics.</span></li>
+                <li><span>Three clinical problems: diabetic retinopathy, bone-age prediction, cataract detection.</span>
+                </li>
+                <li><span>Public training data given; hidden data secured on the server for evaluation.</span></li>
+              </ul>
+            </div>
+            <img src="leader.png" alt="Leaderboard" class="max-h-[48rem]" data-d="3" />
+          </div>
+          <div
+            class="flex justify-between items-baseline font-mono text-label tracking-[0.16em] uppercase text-muted-light pt-[14px] border-t border-border-light">
+            <span>Validation</span><span>Hackathon setup</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 22 · RESULTS -->
+      <section class="slide navy">
+        <div class="absolute inset-0 px-[144px] py-[78px] grid grid-rows-[auto_1fr_auto] z-[2]">
+          <div
+            class="flex justify-between items-baseline font-mono text-label tracking-[0.16em] uppercase text-muted-dark pb-[14px] border-b border-border-dark">
+            <span>Shared validation</span><span class="count text-gold"></span>
+          </div>
+          <div class="self-center">
+            <div class="reveal mb-[44px]" data-d="1">
+              <div class="font-mono text-label tracking-[0.2em] uppercase text-gold mb-4">Battle-tested, not theoretical
+              </div>
+              <div class="w-9 h-px bg-gold my-[22px]"></div>
+              <h2 class="font-serif font-semibold text-h2">The <em>results</em></h2>
+            </div>
+            <div class="stat-row max-w-[1400px] reveal" data-d="2">
+              <div class="stat-cell">
+                <div class="num">150+</div>
+                <div class="lab">Distinct teams</div>
+                <div class="note">Massive participation</div>
+              </div>
+              <div class="stat-cell">
+                <div class="num">450+</div>
+                <div class="lab">Unique submissions</div>
+                <div class="note">Handled reliably</div>
+              </div>
+              <div class="stat-cell">
+                <div class="num">&lt;4.8s*</div>
+                <div class="lab">Avg eval latency</div>
+                <div class="note">Spin-up → teardown</div>
+              </div>
+              <div class="stat-cell">
+                <div class="num">100%</div>
+                <div class="lab">Server uptime</div>
+                <div class="note">No crashes · no DB locks</div>
+              </div>
+            </div>
+            <p class="lead font-sans text-lead text-muted-dark reveal max-w-[1400px] mt-[44px]" data-d="3">Novel
+              architectures — Vision Transformers, ensembles — ran with <em>zero</em> pipeline errors.</p>
+          </div>
+          <div
+            class="flex justify-between items-baseline font-mono text-label tracking-[0.16em] uppercase text-muted-dark pt-[14px] border-t border-border-dark">
+            <span>Validation (* Tested on Resnet-18 on 500 images dataset)</span><span>Results</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 23 · COMBINED CONTRIBUTIONS -->
+      <section class="slide cream">
+        <div class="absolute inset-0 px-[144px] py-[78px] grid grid-rows-[auto_1fr_auto] z-[2]">
+          <div
+            class="flex justify-between items-baseline font-mono text-label tracking-[0.16em] uppercase text-muted-light pb-[14px] border-b border-border-light">
+            <span>Synthesis</span><span class="count text-gold"></span>
+          </div>
+          <div class="self-center">
+            <div class="reveal mb-[44px]" data-d="1">
+              <div class="font-mono text-label tracking-[0.2em] uppercase text-gold mb-4">What we built</div>
+              <div class="w-9 h-px bg-gold my-[22px]"></div>
+              <h2 class="font-serif font-semibold text-h2">Combined <em>contributions</em></h2>
+            </div>
+            <div class="cards max-w-[1400px] reveal" data-d="2">
+              <div class="card">
+                <div class="font-mono text-[12px] tracking-[0.16em] text-gold uppercase">Part A · Infrastructure</div>
+                <h3 class="font-serif font-medium text-h3 my-[14px]">Resilient FL core</h3>
+                <p class="font-sans text-[19px] leading-[1.55]">Event-driven Pub/Sub architecture, async-compatible
+                  secure aggregation, and pragmatic edge + database engineering.</p>
+              </div>
+              <div class="card">
+                <div class="font-mono text-[12px] tracking-[0.16em] text-gold uppercase">Part B · Trust</div>
+                <h3 class="font-serif font-medium text-h3 my-[14px]">Evaluation ecosystem</h3>
+                <p class="font-sans text-[19px] leading-[1.55]">Hidden-dataset evaluation, containerised isolation, and
+                  a provenance-backed public leaderboard.</p>
+              </div>
+              <div class="card">
+                <div class="font-mono text-[12px] tracking-[0.16em] text-gold uppercase">Part B · Access</div>
+                <h3 class="font-serif font-medium text-h3 my-[14px]">Deployment layer</h3>
+                <p class="font-sans text-[19px] leading-[1.55]">A productized Electron client and script-based
+                  extensibility for any model architecture.</p>
+              </div>
+            </div>
+          </div>
+          <div
+            class="flex justify-between items-baseline font-mono text-label tracking-[0.16em] uppercase text-muted-light pt-[14px] border-t border-border-light">
+            <span>Synthesis</span><span>Contributions</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 24 · LIMITATIONS -->
+      <section class="slide navy">
+        <div class="absolute inset-0 px-[144px] py-[78px] grid grid-rows-[auto_1fr_auto] z-[2]">
+          <div
+            class="flex justify-between items-baseline font-mono text-label tracking-[0.16em] uppercase text-muted-dark pb-[14px] border-b border-border-dark">
+            <span>Reflection</span><span class="count text-gold"></span>
+          </div>
+          <div class="self-center">
+            <div class="reveal mb-[44px]" data-d="1">
+              <div class="font-mono text-label tracking-[0.2em] uppercase text-gold mb-4">Honest boundaries</div>
+              <div class="w-9 h-px bg-gold my-[22px]"></div>
+              <h2 class="font-serif font-semibold text-h2">Limitations</h2>
+            </div>
+            <ul class="dash max-w-[1400px] reveal" data-d="2">
+              <li><span>Validated on single-modality classification and regression only.</span></li>
+              <li><span>No fairness or explainability auditing yet.</span></li>
+              <li><span>Dataset enrichment is passive — driven by contributor submissions.</span></li>
+              <li><span>Regulatory acceptance remains a <em>policy</em> question, not just a technical one.</span></li>
+            </ul>
+          </div>
+          <div
+            class="flex justify-between items-baseline font-mono text-label tracking-[0.16em] uppercase text-muted-dark pt-[14px] border-t border-border-dark">
+            <span>Reflection</span><span>Limitations</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 25 · FUTURE WORK -->
+      <section class="slide cream">
+        <div class="absolute inset-0 px-[144px] py-[78px] grid grid-rows-[auto_1fr_auto] z-[2]">
+          <div
+            class="flex justify-between items-baseline font-mono text-label tracking-[0.16em] uppercase text-muted-light pb-[14px] border-b border-border-light">
+            <span>Reflection</span><span class="count text-gold"></span>
+          </div>
+          <div class="self-center">
+            <div class="reveal mb-[44px]" data-d="1">
+              <div class="font-mono text-label tracking-[0.2em] uppercase text-gold mb-4">Where it goes next</div>
+              <div class="w-9 h-px bg-gold my-[22px]"></div>
+              <h2 class="font-serif font-semibold text-h2">Future <em>work</em></h2>
+            </div>
+            <ul class="dash max-w-[1400px] reveal" data-d="2">
+              <li><span>Multi-modal and foundation-model evaluation — imaging, notes, and genomics together.</span></li>
+              <li><span>Fairness and explainability auditing built into the pipeline.</span></li>
+              <li><span>Asymmetric weight sharing for model copyright.</span></li>
+              <li><span>Active-learning-based benchmark curation.</span></li>
+              <!-- <li><span>Cross-border / multi-cloud FL, 5G-edge deployment, and formal verification of SecAgg.</span></li> -->
+              <!-- <li><span>Formal engagement with FDA / EMA / CDSCO on evidence-grade certification.</span></li> -->
+            </ul>
+          </div>
+          <div
+            class="flex justify-between items-baseline font-mono text-label tracking-[0.16em] uppercase text-muted-light pt-[14px] border-t border-border-light">
+            <span>Reflection</span><span>Future work</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 26 · CONCLUSION -->
+      <section class="slide navy">
+        <div class="absolute inset-0 px-[144px] py-[78px] flex flex-col justify-center z-[2]">
+          <div class="reveal font-mono text-label tracking-[0.2em] uppercase text-gold" data-d="1">Conclusion</div>
+          <div class="reveal w-9 h-px bg-gold my-[26px]" data-d="2"></div>
+          <h1 class="reveal font-serif font-semibold text-h1 max-w-[1500px]" data-d="3">FL at national scale is a
+            <em>systems</em> problem — not just an algorithm problem.
+          </h1>
+          <p class="lead reveal font-sans text-lead text-muted-dark mt-[36px] max-w-[1150px]" data-d="4">BODH.AI is a
+            battle-tested, privacy-preserving, trustworthy national standard for clinical AI — bridging academic theory
+            and real hospital deployment.</p>
+        </div>
+      </section>
+
+      <!-- 27 · THANK YOU -->
+      <section class="slide navy">
+        <div class="absolute inset-0 px-[144px] py-[78px] flex flex-col justify-center z-[2]">
+          <div class="reveal font-mono text-label tracking-[0.24em] uppercase text-gold" data-d="1">Thank you</div>
+          <div class="reveal w-9 h-px bg-gold my-[26px]" data-d="2"></div>
+          <div class="chapter-title reveal font-serif text-[120px] font-bold leading-[0.98] tracking-[-0.02em]"
+            data-d="3">Questions<span class="text-gold">?</span></div>
+          <div class="reveal flex gap-16 flex-wrap mt-[52px]" data-d="4">
+            <div>
+              <div class="font-serif text-[32px] font-semibold">Keshav Banka</div>
+              <div class="font-mono text-label tracking-[0.16em] uppercase text-gold mt-1.5">241110032</div>
+            </div>
+            <div>
+              <div class="font-serif text-[32px] font-semibold">Harsh Baid</div>
+              <div class="font-mono text-label tracking-[0.16em] uppercase text-gold mt-1.5">241110026</div>
+            </div>
+            <div>
+              <div class="font-serif text-[32px] font-semibold">Prof. Nisheeth Srivastava</div>
+              <div class="font-mono text-label tracking-[0.16em] uppercase text-gold mt-1.5">Supervisor</div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="absolute left-[144px] right-[144px] bottom-[78px] flex justify-between items-baseline font-mono text-label tracking-[0.16em] uppercase text-muted-dark border-t border-border-dark pt-[14px]">
+          <span>Department of Computer Science and Engineering</span><span>IIT Kanpur</span>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Deck chrome -->
+  <div
+    class="fixed right-[26px] bottom-[20px] z-[1000] font-mono text-[12px] tracking-[0.16em] text-[#7C8AA6] select-none">
+    <b id="pgCur" class="text-gold font-medium">1</b> / <span id="pgTot">27</span>
+  </div>
+  <div
+    class="fixed left-[26px] bottom-[20px] z-[1000] font-mono text-[11px] tracking-[0.14em] text-[#54607A] select-none">
+    ← → · space · scroll · swipe</div>
+
+  <script>
+    class SlidePresentation {
+      constructor() {
+        this.slides = [...document.querySelectorAll('.slide')];
+        this.i = 0;
+        this.stage = document.getElementById('deckStage');
+        this.total = this.slides.length;
+        document.getElementById('pgTot').textContent = this.total;
+        this.numberChrome();
+        this.scale(); addEventListener('resize', () => this.scale());
+        this.keys(); this.wheel(); this.touch();
+        this.show(0);
+      }
+      numberChrome() {
+        this.slides.forEach((s, idx) => {
+          s.querySelectorAll('.count').forEach(c => {
+            c.textContent = String(idx + 1).padStart(2, '0') + ' / ' + String(this.total).padStart(2, '0');
+          });
+        });
+      }
+      scale() {
+        const f = Math.min(innerWidth / 1920, innerHeight / 1080);
+        const x = (innerWidth - 1920 * f) / 2, y = (innerHeight - 1080 * f) / 2;
+        this.stage.style.transform = `translate(${x}px,${y}px) scale(${f})`;
+      }
+      show(n) {
+        this.i = Math.max(0, Math.min(n, this.total - 1));
+        this.slides.forEach((s, k) => {
+          s.classList.toggle('active', k === this.i);
+          s.classList.toggle('visible', k === this.i);
+        });
+        document.getElementById('pgCur').textContent = this.i + 1;
+      }
+      next() { this.show(this.i + 1); } prev() { this.show(this.i - 1); }
+      keys() {
+        addEventListener('keydown', e => {
+          if (['ArrowRight', 'ArrowDown', ' ', 'PageDown'].includes(e.key)) { e.preventDefault(); this.next(); }
+          else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) { e.preventDefault(); this.prev(); }
+          else if (e.key === 'Home') { this.show(0); } else if (e.key === 'End') { this.show(this.total - 1); }
+        });
+      }
+      wheel() {
+        let lock = false;
+        addEventListener('wheel', e => {
+          if (lock) return; if (Math.abs(e.deltaY) < 24) return;
+          lock = true; e.deltaY > 0 ? this.next() : this.prev();
+          setTimeout(() => lock = false, 560);
+        }, { passive: true });
+      }
+      touch() {
+        let x0 = null;
+        addEventListener('touchstart', e => x0 = e.touches[0].clientX, { passive: true });
+        addEventListener('touchend', e => {
+          if (x0 === null) return; const dx = e.changedTouches[0].clientX - x0;
+          if (Math.abs(dx) > 50) dx < 0 ? this.next() : this.prev(); x0 = null;
+        }, { passive: true });
+      }
+    }
+    new SlidePresentation();
+  </script>
+</body>
+
+</html>
