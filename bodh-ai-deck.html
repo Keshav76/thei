@@ -808,123 +808,6 @@
         </div>
       </section>
 
-      <!-- 15 · EVALUATION CRISIS -->
-      <section class="slide cream">
-        <div class="absolute inset-0 px-[144px] py-[78px] grid grid-rows-[auto_1fr_auto] z-[2]">
-          <div
-            class="flex justify-between items-baseline font-mono text-label tracking-[0.16em] uppercase text-muted-light pb-[14px] border-b border-border-light">
-            <span>Part B · BODH.AI</span><span class="count text-gold"></span>
-          </div>
-          <div class="self-center">
-            <div class="reveal mb-[44px]" data-d="1">
-              <div class="font-mono text-label tracking-[0.2em] uppercase text-gold mb-4">Why existing platforms fail
-                healthcare</div>
-              <div class="w-9 h-px bg-gold my-[22px]"></div>
-              <h2 class="font-serif font-semibold text-h2 max-w-[1400px]">The <em>evaluation</em> crisis</h2>
-            </div>
-            <ul class="dash max-w-[1400px] reveal" data-d="2">
-              <li><span><b>Kaggle</b> — requires publicly disseminating datasets (a privacy bottleneck).</span></li>
-              <li><span><b>Public benchmarks</b> — decay through repeated hypothesis testing.</span></li>
-              <li><span><b>MLPerf</b> — closed, consortium-driven; not open or continuous.</span></li>
-              <li><span>The gap: independent, privacy-preserving, <em>reproducible</em> third-party evaluation.</span>
-              </li>
-            </ul>
-          </div>
-          <div
-            class="flex justify-between items-baseline font-mono text-label tracking-[0.16em] uppercase text-muted-light pt-[14px] border-t border-border-light">
-            <span>Part B</span><span>The evaluation crisis</span>
-          </div>
-        </div>
-      </section>
-
-      <!-- 16 · HIDDEN-DATASET -->
-      <section class="slide navy">
-        <div class="absolute inset-0 px-[144px] py-[78px] grid grid-rows-[auto_1fr_auto] z-[2]">
-          <div
-            class="flex justify-between items-baseline font-mono text-label tracking-[0.16em] uppercase text-muted-dark pb-[14px] border-b border-border-dark">
-            <span>Part B · BODH.AI</span><span class="count text-gold"></span>
-          </div>
-          <div class="self-center">
-            <div class="reveal mb-[44px]" data-d="1">
-              <div class="font-mono text-label tracking-[0.2em] uppercase text-gold mb-4">The core idea</div>
-              <div class="w-9 h-px bg-gold my-[22px]"></div>
-              <h2 class="font-serif font-semibold text-h2 max-w-[1400px]">A <em>hidden-dataset</em> evaluation paradigm
-              </h2>
-            </div>
-            <ul class="dash max-w-[1400px] reveal" data-d="2">
-              <li><span>Strictly decouple model development from model evaluation.</span></li>
-              <li><span>Curated clinical data lives hidden on the server — never exposed via any API.</span></li>
-              <li><span>The developer never sees the test set — data leakage and overfitting are <em>mathematically
-                    eliminated</em>.</span></li>
-              <li><span>Produces tamper-evident, regulatory-grade evidence; continuous enrichment fights benchmark
-                  decay.</span></li>
-            </ul>
-          </div>
-          <div
-            class="flex justify-between items-baseline font-mono text-label tracking-[0.16em] uppercase text-muted-dark pt-[14px] border-t border-border-dark">
-            <span>Part B</span><span>Hidden-dataset evaluation</span>
-          </div>
-        </div>
-      </section>
-
-      <!-- 17 · SECURITY OF EXECUTION -->
-      <section class="slide cream">
-        <div class="absolute inset-0 px-[144px] py-[78px] grid grid-rows-[auto_1fr_auto] z-[2]">
-          <div
-            class="flex justify-between items-baseline font-mono text-label tracking-[0.16em] uppercase text-muted-light pb-[14px] border-b border-border-light">
-            <span>Part B · BODH.AI</span><span class="count text-gold"></span>
-          </div>
-          <div class="self-center">
-            <div class="reveal mb-[44px]" data-d="1">
-              <div class="font-mono text-label tracking-[0.2em] uppercase text-gold mb-4">Running untrusted code safely
-              </div>
-              <div class="w-9 h-px bg-gold my-[22px]"></div>
-              <h2 class="font-serif font-semibold text-h2 max-w-[1400px]">A <em>network-isolated</em> Docker sandbox
-              </h2>
-            </div>
-            <ul class="dash max-w-[1400px] reveal" data-d="2">
-              <li><span>Every submission runs in an ephemeral container with <b>--network none</b>; exfiltration fails
-                  at the kernel.</span></li>
-              <li><span>The hidden dataset is mounted read-only; cgroups cap CPU, RAM, and time.</span></li>
-              <li><span>Only stdout (predictions) leaves; the container is destroyed immediately after.</span></li>
-            </ul>
-          </div>
-          <div
-            class="flex justify-between items-baseline font-mono text-label tracking-[0.16em] uppercase text-muted-light pt-[14px] border-t border-border-light">
-            <span>Part B</span><span>Security of execution</span>
-          </div>
-        </div>
-      </section>
-
-      <!-- 18 · TRUST & TRANSPARENCY -->
-      <section class="slide navy">
-        <div class="absolute inset-0 px-[144px] py-[78px] grid grid-rows-[auto_1fr_auto] z-[2]">
-          <div
-            class="flex justify-between items-baseline font-mono text-label tracking-[0.16em] uppercase text-muted-dark pb-[14px] border-b border-border-dark">
-            <span>Part B · BODH.AI</span><span class="count text-gold"></span>
-          </div>
-          <div class="self-center">
-            <div class="reveal mb-[44px]" data-d="1">
-              <div class="font-mono text-label tracking-[0.2em] uppercase text-gold mb-4">Credibility, made public</div>
-              <div class="w-9 h-px bg-gold my-[22px]"></div>
-              <h2 class="font-serif font-semibold text-h2 max-w-[1400px]">A leaderboard with a <em>provenance</em> trail
-              </h2>
-            </div>
-            <ul class="dash max-w-[1400px] reveal" data-d="2">
-              <li><span>Performance is published openly — good or bad.</span></li>
-              <li><span>Each entry is cryptographically tied to a model hash, dataset version, and timestamp.</span>
-              </li>
-              <li><span>A verifiable audit trail — evidence for governance boards and regulators (FDA / EMA /
-                  CDSCO).</span></li>
-            </ul>
-          </div>
-          <div
-            class="flex justify-between items-baseline font-mono text-label tracking-[0.16em] uppercase text-muted-dark pt-[14px] border-t border-border-dark">
-            <span>Part B</span><span>Trust &amp; transparency</span>
-          </div>
-        </div>
-      </section>
-
       <!-- 19 · DESKTOP CLIENT -->
       <section class="slide cream">
         <div class="absolute inset-0 px-[144px] py-[78px] grid grid-rows-[auto_1fr_auto] z-[2]">
@@ -954,6 +837,94 @@
           </div>
         </div>
       </section>
+      <!-- 15 · EVALUATION CRISIS -->
+      <section class="slide cream">
+        <div class="absolute inset-0 px-[144px] py-[78px] grid grid-rows-[auto_1fr_auto] z-[2]">
+          <div
+            class="flex justify-between items-baseline font-mono text-label tracking-[0.16em] uppercase text-muted-light pb-[14px] border-b border-border-light">
+            <span>Part B · BODH.AI</span><span class="count text-gold"></span>
+          </div>
+          <div class="self-center flex gap-16 items-end">
+              <div class="self-center">
+                <div class="reveal mb-[44px]" data-d="1">
+                  <div class="font-mono text-label tracking-[0.2em] uppercase text-gold mb-4">Why existing platforms fail
+                    healthcare</div>
+                  <div class="w-9 h-px bg-gold my-[22px]"></div>
+                  <h2 class="font-serif font-semibold text-h2 max-w-[1400px]">The <em>evaluation</em> crisis</h2>
+                </div>
+                <p class="text-2xl pb-10">The trilemma — <span class="text-gold font-serif"> openness, reliability, and coverage </span>: you can only get two of the three in health AI testing.</p>
+                <ul class="dash max-w-[1400px] reveal" data-d="2">
+                  <li><span><b>Academic/research</b> — reliable and open, but small scale limits coverage.</span></li>
+                  <li><span><b>Hospital chains</b> — solve coverage, but commercial interests block openness and limited engineering talent blocks reliability.</span></li>
+                  <li><span><b>Startups</b> — agile enough for openness or reliability, but coverage-limited like academia.</span></li>
+                  <li><span><span class="text-gold"><div class="text-gold font-bold inline">BODH AI</div> — solves all three</span>: cross-entity training for coverage, competitive benchmarking for reliability, free access for openness.</span>
+                  </li>
+                </ul>
+              </div>
+              <img src="trilema.png" class="h-[36rem]"/>
+          </div>
+          <div
+            class="flex justify-between items-baseline font-mono text-label tracking-[0.16em] uppercase text-muted-light pt-[14px] border-t border-border-light">
+            <span>Part B</span><span>The evaluation crisis</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 16 · HIDDEN-DATASET -->
+      <section class="slide navy">
+        <div class="absolute inset-0 px-[144px] py-[78px] grid grid-rows-[auto_1fr_auto] z-[2]">
+          <div
+            class="flex justify-between items-baseline font-mono text-label tracking-[0.16em] uppercase text-muted-dark pb-[14px] border-b border-border-dark">
+            <span>Part B · BODH.AI</span><span class="count text-gold"></span>
+          </div>
+          <div class="self-center">
+            <div class="reveal mb-[44px]" data-d="1">
+              <div class="font-mono text-label tracking-[0.2em] uppercase text-gold mb-4">The core idea</div>
+              <div class="w-9 h-px bg-gold my-[22px]"></div>
+              <h2 class="font-serif font-semibold text-h2 max-w-[1400px]">A <em>hidden-dataset</em> evaluation paradigm
+              </h2>
+            </div>
+            <ul class="dash max-w-[1400px] reveal" data-d="2">
+              <li><span>Strictly decouple model development from model evaluation.</span></li>
+              <li><span>Curated clinical data lives hidden on the server — never exposed via any API.</span></li>
+              <li><span>Produces tamper-evident, regulatory-grade evidence; continuous enrichment fights benchmark
+                  decay.</span></li>
+            </ul>
+          </div>
+          <div
+            class="flex justify-between items-baseline font-mono text-label tracking-[0.16em] uppercase text-muted-dark pt-[14px] border-t border-border-dark">
+            <span>Part B</span><span>Hidden-dataset evaluation</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 17 · SECURITY OF EXECUTION -->
+      <section class="slide cream">
+        <div class="absolute inset-0 px-[144px] py-[78px] grid grid-rows-[auto_1fr_auto] z-[2]">
+          <div
+            class="flex justify-between items-baseline font-mono text-label tracking-[0.16em] uppercase text-muted-light pb-[14px] border-b border-border-light">
+            <span>Part B · BODH.AI</span><span class="count text-gold"></span>
+          </div>
+          <div class="self-center">
+            <div class="reveal mb-[44px]" data-d="1">
+              <div class="font-mono text-label tracking-[0.2em] uppercase text-gold mb-4">Running untrusted code safely
+              </div>
+              <div class="w-9 h-px bg-gold my-[22px]"></div>
+              <h2 class="font-serif font-semibold text-h2 max-w-[1400px]">A <em>network-isolated</em> Docker sandbox
+              </h2>
+            </div>
+            <ul class="dash max-w-[1400px] reveal" data-d="2">
+              <li><span>Every submission runs in an short-lived container with <b>no network</b></span></li>
+              <li><span>The hidden dataset is mounted read-only; with capped CPU, RAM, and time.</span></li>
+              <li><span>Only the predictions leaves; the container is destroyed immediately after.</span></li>
+            </ul>
+          </div>
+          <div
+            class="flex justify-between items-baseline font-mono text-label tracking-[0.16em] uppercase text-muted-light pt-[14px] border-t border-border-light">
+            <span>Part B</span><span>Security of execution</span>
+          </div>
+        </div>
+      </section>
 
       <!-- 20 · EXTENSIBILITY -->
       <section class="slide navy">
@@ -967,14 +938,13 @@
               <div class="font-mono text-label tracking-[0.2em] uppercase text-gold mb-4">Any architecture, no pipeline
                 change</div>
               <div class="w-9 h-px bg-gold my-[22px]"></div>
-              <h2 class="font-serif font-semibold text-h2 max-w-[1400px]">Script-based <em>extensibility</em></h2>
+              <h2 class="font-serif font-semibold text-h2 max-w-[1400px]">Configuration-based <em>extensibility</em></h2>
             </div>
             <ul class="dash max-w-[1400px] reveal" data-d="2">
-              <li><span>Model definition is decoupled from the platform pipeline.</span></li>
-              <li><span>Researchers upload arbitrary architectures via <b>solution.py</b> + a ZIP of weights.</span>
+              <li><span>Model definition is decoupled from the platform pipeline — researchers describe their model through a guided form (architecture, preprocessing, output mapping), never through code.</span></li>
+              <li><span>Researchers upload only a weights file (.onnx, .pt, .h5, .pkl, …) — no custom scripts.</span>
               </li>
-              <li><span>"Model testing without training" — benchmark pre-trained models without joining FL.</span></li>
-              <li><span>The platform loads and runs any model with <em>no</em> core code changes.</span></li>
+              <li><span>A built-in evaluation harness loads and runs every submission — new models require no platform code changes.</span></li>
             </ul>
           </div>
           <div
@@ -983,6 +953,50 @@
           </div>
         </div>
       </section>
+      <section class="slide navy">
+        <div class="absolute inset-0 px-[144px] py-[78px] grid grid-rows-[auto_1fr_auto] z-[2]">
+          <div
+            class="flex justify-between items-baseline font-mono text-label tracking-[0.16em] uppercase text-muted-dark pb-[14px] border-b border-border-dark">
+            <span>Part B · Benchmarking Pipeline</span><span class="count text-gold"></span>
+          </div>
+          <div class="self-center flex justify-center">
+          <img src="submission_flow.png" class="h-[49rem]"/>
+          </div>
+          <div
+            class="flex justify-between items-baseline font-mono text-label tracking-[0.16em] uppercase text-muted-dark pt-[14px] border-t border-border-dark">
+            <span>Part B</span><span>Benchmarking Pipeline</span>
+          </div>
+      </section>
+
+      <!-- 18 · TRUST & TRANSPARENCY -->
+      <section class="slide navy">
+        <div class="absolute inset-0 px-[144px] py-[78px] grid grid-rows-[auto_1fr_auto] z-[2]">
+          <div
+            class="flex justify-between items-baseline font-mono text-label tracking-[0.16em] uppercase text-muted-dark pb-[14px] border-b border-border-dark">
+            <span>Part B · BODH.AI</span><span class="count text-gold"></span>
+          </div>
+          <div class="self-center">
+            <div class="reveal mb-[44px]" data-d="1">
+              <div class="font-mono text-label tracking-[0.2em] uppercase text-gold mb-4">Credibility, made public</div>
+              <div class="w-9 h-px bg-gold my-[22px]"></div>
+              <h2 class="font-serif font-semibold text-h2 max-w-[1400px]">A leaderboard with a <em>provenance</em> trail
+              </h2>
+            </div>
+            <ul class="dash max-w-[1400px] reveal" data-d="2">
+              <li><span>Performance is published openly — good or bad.</span></li>
+              <li><span>Each entry is cryptographically tied to a model hash, dataset version, and timestamp.</span>
+              </li>
+              <li><span>Automatic outdated status for models benchmarked on previous dataset versions.</span></li>
+            </ul>
+          </div>
+          <div
+            class="flex justify-between items-baseline font-mono text-label tracking-[0.16em] uppercase text-muted-dark pt-[14px] border-t border-border-dark">
+            <span>Part B</span><span>Trust &amp; transparency</span>
+          </div>
+        </div>
+      </section>
+
+
 
       <!-- 21 · HACKATHON SETUP -->
       <section class="slide cream">
