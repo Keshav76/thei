@@ -691,8 +691,6 @@
               <li><span>Goal: compute the sum of updates without seeing any single client's weights.</span></li>
               <li><span>Pairwise secret sharing — clients add random masks that cancel on aggregation.</span></li>
               <li><span>Intercepted payloads look like <em>meaningless noise</em>, even to the server.</span></li>
-              <li><span>Shamir's Secret Sharing provides dropout recovery — re-engineered for a stateless, async
-                  world.</span></li>
             </ul>
           </div>
           <div
@@ -845,23 +843,29 @@
             <span>Part B · BODH.AI</span><span class="count text-gold"></span>
           </div>
           <div class="self-center flex gap-16 items-end">
-              <div class="self-center">
-                <div class="reveal mb-[44px]" data-d="1">
-                  <div class="font-mono text-label tracking-[0.2em] uppercase text-gold mb-4">Why existing platforms fail
-                    healthcare</div>
-                  <div class="w-9 h-px bg-gold my-[22px]"></div>
-                  <h2 class="font-serif font-semibold text-h2 max-w-[1400px]">The <em>evaluation</em> crisis</h2>
-                </div>
-                <p class="text-2xl pb-10">The trilemma — <span class="text-gold font-serif"> openness, reliability, and coverage </span>: you can only get two of the three in health AI testing.</p>
-                <ul class="dash max-w-[1400px] reveal" data-d="2">
-                  <li><span><b>Academic/research</b> — reliable and open, but small scale limits coverage.</span></li>
-                  <li><span><b>Hospital chains</b> — solve coverage, but commercial interests block openness and limited engineering talent blocks reliability.</span></li>
-                  <li><span><b>Startups</b> — agile enough for openness or reliability, but coverage-limited like academia.</span></li>
-                  <li><span><span class="text-gold"><div class="text-gold font-bold inline">BODH AI</div> — solves all three</span>: cross-entity training for coverage, competitive benchmarking for reliability, free access for openness.</span>
-                  </li>
-                </ul>
+            <div class="self-center">
+              <div class="reveal mb-[44px]" data-d="1">
+                <div class="font-mono text-label tracking-[0.2em] uppercase text-gold mb-4">Why existing platforms fail
+                  healthcare</div>
+                <div class="w-9 h-px bg-gold my-[22px]"></div>
+                <h2 class="font-serif font-semibold text-h2 max-w-[1400px]">The <em>evaluation</em> crisis</h2>
               </div>
-              <img src="trilema.png" class="h-[36rem]"/>
+              <p class="text-2xl pb-10">The trilemma — <span class="text-gold font-serif"> openness, reliability, and
+                  coverage </span>: you can only get two of the three in health AI testing.</p>
+              <ul class="dash max-w-[1400px] reveal" data-d="2">
+                <li><span><b>Academic/research</b> — reliable and open, but small scale limits coverage.</span></li>
+                <li><span><b>Hospital chains</b> — solve coverage, but commercial interests block openness and limited
+                    engineering talent blocks reliability.</span></li>
+                <li><span><b>Startups</b> — agile enough for openness or reliability, but coverage-limited like
+                    academia.</span></li>
+                <li><span><span class="text-gold">
+                      <div class="text-gold font-bold inline">BODH AI</div> — solves all three
+                    </span>: cross-entity training for coverage, competitive benchmarking for reliability, free access
+                    for openness.</span>
+                </li>
+              </ul>
+            </div>
+            <img src="trilema.png" class="h-[36rem]" />
           </div>
           <div
             class="flex justify-between items-baseline font-mono text-label tracking-[0.16em] uppercase text-muted-light pt-[14px] border-t border-border-light">
@@ -938,13 +942,16 @@
               <div class="font-mono text-label tracking-[0.2em] uppercase text-gold mb-4">Any architecture, no pipeline
                 change</div>
               <div class="w-9 h-px bg-gold my-[22px]"></div>
-              <h2 class="font-serif font-semibold text-h2 max-w-[1400px]">Configuration-based <em>extensibility</em></h2>
+              <h2 class="font-serif font-semibold text-h2 max-w-[1400px]">Configuration-based <em>extensibility</em>
+              </h2>
             </div>
             <ul class="dash max-w-[1400px] reveal" data-d="2">
-              <li><span>Model definition is decoupled from the platform pipeline — researchers describe their model through a guided form (architecture, preprocessing, output mapping), never through code.</span></li>
+              <li><span>Model definition is decoupled from the platform pipeline — researchers describe their model
+                  through a guided form (architecture, preprocessing, output mapping), never through code.</span></li>
               <li><span>Researchers upload only a weights file (.onnx, .pt, .h5, .pkl, …) — no custom scripts.</span>
               </li>
-              <li><span>A built-in evaluation harness loads and runs every submission — new models require no platform code changes.</span></li>
+              <li><span>A built-in evaluation harness loads and runs every submission — new models require no platform
+                  code changes.</span></li>
             </ul>
           </div>
           <div
@@ -960,7 +967,7 @@
             <span>Part B · Benchmarking Pipeline</span><span class="count text-gold"></span>
           </div>
           <div class="self-center flex justify-center">
-          <img src="submission_flow.png" class="h-[49rem]"/>
+            <img src="submission_flow.png" class="h-[49rem]" />
           </div>
           <div
             class="flex justify-between items-baseline font-mono text-label tracking-[0.16em] uppercase text-muted-dark pt-[14px] border-t border-border-dark">
